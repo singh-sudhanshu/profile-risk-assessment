@@ -17,3 +17,6 @@ spring:
     database-platform: MYSQL
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+  thymeleaf:
+    #mode: LEGACYHTML5
+    cache: false

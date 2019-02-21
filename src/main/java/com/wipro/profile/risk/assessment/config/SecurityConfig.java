@@ -28,17 +28,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 	 @Autowired
 	 private DataSource dataSource;
 	 
-	 private final String USER_QUERY = "select email, password from user where email=?";
+	 private final String USER_QUERY = "select email, password, active from user where email=?";
 	 
-	 private final String ROLE_QUERY = "select u.email, r.name from user u inner join users_roles ur on (u.id = ur.user_id) inner join role r on (ur.role_id = r.id) where u.email=sudhansu.singh@wipro.com";
+	 private final String ROLE_QUERY = "select u.email, r.name from user u inner join users_roles ur on (u.id = ur.user_id) inner join role r on (ur.role_id = r.id) where u.email=?";
 
 	    @Override
 	    protected void configure(HttpSecurity http) throws Exception {
 	        http
 	                .authorizeRequests()
+	                .antMatchers("/registration",
+	                		"/js/**",
+	                		"/css/**",
+	                		"/webjars/**"
+	                		)
+	                .permitAll()
 	                .antMatchers("/").permitAll()
 	                .antMatchers("/login").permitAll()
-	                .antMatchers("/registration").permitAll()
+	                
+	                
 	                .antMatchers("/home/**").hasAuthority("ROLE_ADMIN")
 	                .anyRequest()
 	                .authenticated()
@@ -76,11 +83,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 	    }	    
 
 	    @Override
-	    protected void configure(AuthenticationManagerBuilder auth) throws Exception {	    	
-	    	auth.jdbcAuthentication().usersByUsernameQuery(USER_QUERY)
-	    	.authoritiesByUsernameQuery(ROLE_QUERY)
-	    	.dataSource(dataSource)
-	    	.passwordEncoder(passwordEncoder());
+	    protected void configure(AuthenticationManagerBuilder auth)  {	   
+	    	try {
+	    		auth.jdbcAuthentication().usersByUsernameQuery(USER_QUERY)
+		    	.authoritiesByUsernameQuery(ROLE_QUERY)
+		    	.dataSource(dataSource)
+		    	.passwordEncoder(passwordEncoder());
+	    	}
+	    	
+	    	catch(Exception ex) {
+	    		System.out.println(ex.getStackTrace());
+	    	}
+	    	
 	    }
 
 }

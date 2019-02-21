@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.wipro.profile.risk.assessment.model.Role;
 import com.wipro.profile.risk.assessment.model.User;
 import com.wipro.profile.risk.assessment.model.UserRegistrationDto;
+import com.wipro.profile.risk.assessment.repository.RoleRepository;
 import com.wipro.profile.risk.assessment.repository.UserRepository;
 
 @Service
@@ -22,6 +23,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
     private UserRepository userRepository;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -50,8 +54,10 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(registration.getFirstName());
         user.setLastName(registration.getLastName());
         user.setEmail(registration.getEmail());
+        user.setActive(1);
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
-        user.setRoles(Arrays.asList(new Role("ROLE_USER")));
+        Role userRole = roleRepository.findByName("ROLE_ADMIN");
+        user.setRoles(Arrays.asList(userRole));
         return userRepository.save(user);
 	}
 	

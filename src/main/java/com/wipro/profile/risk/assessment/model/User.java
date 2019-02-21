@@ -4,17 +4,27 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name= "user")
 public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private String firstName;
-    private String lastName;
+	
+	@Column(name = "email")
     private String email;
+
+	@Column(name = "firstname")
+    private String firstName;
+	
+	@Column(name = "lastname")
+    private String lastName;	
+	
+	@Column(name = "password")
     private String password;
+	
+	@Column(name = "active")
+	private int active;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -25,7 +35,15 @@ public class User {
                     name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-    public User() {
+    public int getActive() {
+		return active;
+	}
+
+	public void setActive(int active) {
+		this.active = active;
+	}
+
+	public User() {
     }
 
     public User(String firstName, String lastName, String email, String password) {
